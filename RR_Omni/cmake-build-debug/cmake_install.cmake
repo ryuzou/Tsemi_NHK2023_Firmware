@@ -1,4 +1,4 @@
-# Install script for directory: E:/2023NHK/Software/Firmware/RR_Omni
+# Install script for directory: C:/Users/kenke/Desktop/Univ/T-semi/NHK2023/Ryuzo_github/Tsemi_NHK2023_Firmware/RR_Omni
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -45,5 +45,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "E:/2023NHK/Software/Firmware/RR_Omni/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "C:/Users/kenke/Desktop/Univ/T-semi/NHK2023/Ryuzo_github/Tsemi_NHK2023_Firmware/RR_Omni/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
