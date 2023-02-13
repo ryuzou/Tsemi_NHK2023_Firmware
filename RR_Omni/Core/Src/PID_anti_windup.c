@@ -23,7 +23,7 @@ float calc_output_PID_AW(float target, float curr_val, float dt) {
     e_for_i = pid_aw_e;
   }
 
-  pid_aw_e_sum += ((e_for_i + e_for_i_pre)*dt/2.0); // trapezoid integral
+  pid_aw_e_sum += ((e_for_i + e_for_i_pre)*dt/2.0f); // trapezoid integral
 
   pid_aw_e_diff = (3.0f*pid_aw_e - 4.0f*pid_aw_e_pre + pid_aw_e_pre_pre) / (2.0f*dt); // differential
 
