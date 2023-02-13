@@ -11,7 +11,7 @@
 #define CONTROLLER_INCLUDED
 #endif
 
-#define Kp 0.03f
+#define Kp 1.0f
 #define Ki 0.0f
 #define Kd 0.0f
 
