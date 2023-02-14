@@ -529,7 +529,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
     int received_num = atoi(buffer);
     target_velocity = (float)received_num;
     HAL_UART_Receive_IT(&huart2, buffer, 3);
-    printf("%d\r\n", received_num);
+//    printf("%d\r\n", received_num);
   }
 }
 
