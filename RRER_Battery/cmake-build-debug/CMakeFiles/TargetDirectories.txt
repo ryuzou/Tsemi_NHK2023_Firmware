@@ -1,0 +1,3 @@
+C:/Users/kenke/Desktop/Univ/T-semi/NHK2023/Ryuzo_github/Tsemi_NHK2023_Firmware/RRER_Battery/cmake-build-debug/CMakeFiles/RRER_Battery.elf.dir
+C:/Users/kenke/Desktop/Univ/T-semi/NHK2023/Ryuzo_github/Tsemi_NHK2023_Firmware/RRER_Battery/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/kenke/Desktop/Univ/T-semi/NHK2023/Ryuzo_github/Tsemi_NHK2023_Firmware/RRER_Battery/cmake-build-debug/CMakeFiles/rebuild_cache.dir
