@@ -77,11 +77,11 @@ FDCAN_TxHeaderTypeDef TxHeader;
 FDCAN_RxHeaderTypeDef RxHeader;
 FDCAN_FilterTypeDef sFilterConfig;
 
-uint8_t TxData[1];
+uint8_t TxData[64];
 uint8_t RxData[16];
 uint32_t TxMailbox;
 
-//todo to?ï¿½ï¿½?ãŸã‚?ï¿½ï¿½? ä»¥ä¸‹ï¿½??ï¿½ï¿½å¤‰æ•°ã«PIDã‚¿ãƒ¼ã‚²?ï¿½ï¿½??ï¿½ï¿½?(m/s)ãŒï¿½??ï¿½ï¿½ã‚Šã¾?ï¿½ï¿½?
+//todo to??¿½?¿½?ãŸã‚??¿½?¿½? ä»¥ä¸‹ï¿½???¿½?¿½å¤‰æ•°ã«PIDã‚¿ãƒ¼ã‚²??¿½?¿½???¿½?¿½?(m/s)ãŒï¿½???¿½?¿½ã‚Šã¾??¿½?¿½?
 volatile float target_velocity = 0;
 
 volatile int16_t count = 0;
@@ -142,10 +142,10 @@ int main(void)
   MX_TIM2_Init();
   MX_TIM4_Init();
   /* USER CODE BEGIN 2 */
-    TxHeader.Identifier = THIS_STATUS_CAN_ID;
+    TxHeader.Identifier = 0x901;
     TxHeader.IdType = FDCAN_STANDARD_ID;
     TxHeader.TxFrameType = FDCAN_DATA_FRAME;
-    TxHeader.DataLength = FDCAN_DLC_BYTES_1;
+    TxHeader.DataLength = FDCAN_DLC_BYTES_64;
     TxHeader.ErrorStateIndicator = FDCAN_ESI_ACTIVE;
     TxHeader.BitRateSwitch = FDCAN_BRS_ON;
     TxHeader.FDFormat = FDCAN_FD_CAN;
@@ -179,15 +179,17 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-//      TxData[0] = 0xff;
-//      if (HAL_FDCAN_AddMessageToTxFifoQ(&hfdcan1, &TxHeader, TxData) != HAL_OK)
-//      {
-//          Error_Handler();
-//      }
+      for (int i = 0; i < 64; ++i) {
+          TxData[i] = i;
+      }
+      if (HAL_FDCAN_AddMessageToTxFifoQ(&hfdcan1, &TxHeader, TxData) != HAL_OK)
+      {
+          Error_Handler();
+      }
 
       HAL_Delay(100);
 
-      //todo to?ï¿½ï¿½?ãŸã‚?ï¿½ï¿½? ä»¥ä¸‹ã§?ï¿½ï¿½??ï¿½ï¿½?æ„Ÿã˜ã«åˆ¶å¾¡ãŠé¡˜ã„?ï¿½ï¿½?CANFDã®æ–¹ã¯ã¾?ï¿½ï¿½?ãªã®ã§?ï¿½ï¿½?ã£ãŸã‚“ã¯ç„¡è¦–ã—ã¦ãã ã•ã„?ï¿½ï¿½?
+      //todo to??¿½?¿½?ãŸã‚??¿½?¿½? ä»¥ä¸‹ã§??¿½?¿½???¿½?¿½?æ„Ÿã˜ã«åˆ¶å¾¡ãŠé¡˜ã„??¿½?¿½?CANFDã®æ–¹ã¯ã¾??¿½?¿½?ãªã®ã§??¿½?¿½?ã£ãŸã‚“ã¯ç„¡è¦–ã—ã¦ãã ã•ã„??¿½?¿½?
   }
   /* USER CODE END 3 */
 }
@@ -263,7 +265,7 @@ static void MX_FDCAN1_Init(void)
   /* USER CODE END FDCAN1_Init 1 */
   hfdcan1.Instance = FDCAN1;
   hfdcan1.Init.ClockDivider = FDCAN_CLOCK_DIV1;
-  hfdcan1.Init.FrameFormat = FDCAN_FRAME_CLASSIC;
+  hfdcan1.Init.FrameFormat = FDCAN_FRAME_FD_BRS;
   hfdcan1.Init.Mode = FDCAN_MODE_NORMAL;
   hfdcan1.Init.AutoRetransmission = DISABLE;
   hfdcan1.Init.TransmitPause = DISABLE;
@@ -274,8 +276,8 @@ static void MX_FDCAN1_Init(void)
   hfdcan1.Init.NominalTimeSeg2 = 2;
   hfdcan1.Init.DataPrescaler = 1;
   hfdcan1.Init.DataSyncJumpWidth = 2;
-  hfdcan1.Init.DataTimeSeg1 = 13;
-  hfdcan1.Init.DataTimeSeg2 = 2;
+  hfdcan1.Init.DataTimeSeg1 = 4;
+  hfdcan1.Init.DataTimeSeg2 = 3;
   hfdcan1.Init.StdFiltersNbr = 1;
   hfdcan1.Init.ExtFiltersNbr = 0;
   hfdcan1.Init.TxFifoQueueMode = FDCAN_TX_FIFO_OPERATION;
@@ -536,6 +538,18 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
 int _write(int file, char *ptr, int len) {
   HAL_UART_Transmit(&huart2, (uint8_t *) ptr, len, 10);
   return len;
+}
+void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan1, uint32_t RxFifo0ITs) {
+    if ((RxFifo0ITs & FDCAN_IT_RX_FIFO0_NEW_MESSAGE) != RESET) {
+        /* Retrieve Rx messages from RX FIFO0 */
+        if (HAL_FDCAN_GetRxMessage(hfdcan1, FDCAN_RX_FIFO0, &RxHeader, RxData) != HAL_OK) {
+            Error_Handler();
+        }
+
+        if ((RxHeader.Identifier == 0x101) && (RxHeader.IdType == FDCAN_STANDARD_ID)) {
+            printf("data came\n\f");
+        }
+    }
 }
 /* USER CODE END 4 */
 
