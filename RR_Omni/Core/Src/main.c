@@ -42,19 +42,24 @@
 #define PI 3.14f
 #define __RPM_TO_VELOCITY(rpm) (rpm / 60.0f * 2.0f * PI / 2.0f * 0.075f) // todo make a function to calculate velocity from RPM
 
-#define M1
+#define M4
+
 
 #ifdef M1
-#define THIS_STATUS_CAN_ID 0x901
+#define THIS_STATUS_CAN_ID 0x501
+#define PADDING 0
 #endif
 #ifdef M2
-#define THIS_STATUS_CAN_ID 0x902
+#define THIS_STATUS_CAN_ID 0x502
+#define PADDING 1
 #endif
 #ifdef M3
-#define THIS_STATUS_CAN_ID 0x903
+#define THIS_STATUS_CAN_ID 0x503
+#define PADDING 2
 #endif
 #ifdef M4
-#define THIS_STATUS_CAN_ID 0x904
+#define THIS_STATUS_CAN_ID 0x504
+#define PADDING 3
 #endif
 /* USER CODE END PD */
 
@@ -142,28 +147,39 @@ int main(void)
   MX_TIM2_Init();
   MX_TIM4_Init();
   /* USER CODE BEGIN 2 */
-    TxHeader.Identifier = THIS_STATUS_CAN_ID;
-    TxHeader.IdType = FDCAN_STANDARD_ID;
-    TxHeader.TxFrameType = FDCAN_DATA_FRAME;
-    TxHeader.DataLength = FDCAN_DLC_BYTES_1;
-    TxHeader.ErrorStateIndicator = FDCAN_ESI_ACTIVE;
-    TxHeader.BitRateSwitch = FDCAN_BRS_ON;
-    TxHeader.FDFormat = FDCAN_FD_CAN;
-    TxHeader.TxEventFifoControl = FDCAN_NO_TX_EVENTS;
-    TxHeader.MessageMarker = 0;
+  TxHeader.Identifier = THIS_STATUS_CAN_ID;
+  TxHeader.IdType = FDCAN_STANDARD_ID;
+  TxHeader.TxFrameType = FDCAN_DATA_FRAME;
+  TxHeader.DataLength = FDCAN_DLC_BYTES_1;
+  TxHeader.ErrorStateIndicator = FDCAN_ESI_ACTIVE;
+  TxHeader.BitRateSwitch = FDCAN_BRS_ON;
+  TxHeader.FDFormat = FDCAN_FD_CAN;
+  TxHeader.TxEventFifoControl = FDCAN_NO_TX_EVENTS;
+  TxHeader.MessageMarker = 0;
 
-    if (HAL_FDCAN_ConfigFilter(&hfdcan1, &sFilterConfig) != HAL_OK) {
-        Error_Handler();
-    }
-    if (HAL_FDCAN_ConfigGlobalFilter(&hfdcan1, FDCAN_REJECT, FDCAN_REJECT, FDCAN_FILTER_REMOTE, FDCAN_FILTER_REMOTE) !=
-        HAL_OK) {
-        Error_Handler();
-    }
+  FDCAN_FilterTypeDef sFilterConfig;
+  sFilterConfig.IdType = FDCAN_STANDARD_ID;
+  sFilterConfig.FilterIndex = 0;
+  sFilterConfig.FilterType = FDCAN_FILTER_MASK;
+  sFilterConfig.FilterConfig = FDCAN_FILTER_TO_RXFIFO0;
+  sFilterConfig.FilterID1 = 0x101;
+  sFilterConfig.FilterID2 = 0x7FF;
 
-        /* Start the FDCAN module */
-    if (HAL_FDCAN_Start(&hfdcan1) != HAL_OK) {
-        Error_Handler();
-    }
+  if (HAL_FDCAN_ConfigFilter(&hfdcan1, &sFilterConfig) != HAL_OK) {
+    Error_Handler();
+  }
+  if (HAL_FDCAN_ConfigGlobalFilter(&hfdcan1, FDCAN_REJECT, FDCAN_REJECT, FDCAN_FILTER_REMOTE, FDCAN_FILTER_REMOTE) !=
+      HAL_OK) {
+    Error_Handler();
+  }
+
+  /* Start the FDCAN module */
+  if (HAL_FDCAN_Start(&hfdcan1) != HAL_OK) {
+    Error_Handler();
+  }
+  if (HAL_FDCAN_ActivateNotification(&hfdcan1, FDCAN_IT_RX_FIFO0_NEW_MESSAGE, 0) != HAL_OK){
+    Error_Handler();
+  }
 
   HAL_UART_Receive_IT(&huart2, buffer, 3);
   HAL_TIM_Base_Start_IT(&htim2);
@@ -263,7 +279,7 @@ static void MX_FDCAN1_Init(void)
   /* USER CODE END FDCAN1_Init 1 */
   hfdcan1.Instance = FDCAN1;
   hfdcan1.Init.ClockDivider = FDCAN_CLOCK_DIV1;
-  hfdcan1.Init.FrameFormat = FDCAN_FRAME_CLASSIC;
+  hfdcan1.Init.FrameFormat = FDCAN_FRAME_FD_BRS;
   hfdcan1.Init.Mode = FDCAN_MODE_NORMAL;
   hfdcan1.Init.AutoRetransmission = DISABLE;
   hfdcan1.Init.TransmitPause = DISABLE;
@@ -272,10 +288,10 @@ static void MX_FDCAN1_Init(void)
   hfdcan1.Init.NominalSyncJumpWidth = 2;
   hfdcan1.Init.NominalTimeSeg1 = 13;
   hfdcan1.Init.NominalTimeSeg2 = 2;
-  hfdcan1.Init.DataPrescaler = 1;
+  hfdcan1.Init.DataPrescaler = 2;
   hfdcan1.Init.DataSyncJumpWidth = 2;
-  hfdcan1.Init.DataTimeSeg1 = 13;
-  hfdcan1.Init.DataTimeSeg2 = 2;
+  hfdcan1.Init.DataTimeSeg1 = 10;
+  hfdcan1.Init.DataTimeSeg2 = 9;
   hfdcan1.Init.StdFiltersNbr = 1;
   hfdcan1.Init.ExtFiltersNbr = 0;
   hfdcan1.Init.TxFifoQueueMode = FDCAN_TX_FIFO_OPERATION;
@@ -537,6 +553,30 @@ int _write(int file, char *ptr, int len) {
   HAL_UART_Transmit(&huart2, (uint8_t *) ptr, len, 10);
   return len;
 }
+void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan1, uint32_t RxFifo0ITs) {
+  if ((RxFifo0ITs & FDCAN_IT_RX_FIFO0_NEW_MESSAGE) != RESET) {
+    /* Retrieve Rx messages from RX FIFO0 */
+    if (HAL_FDCAN_GetRxMessage(hfdcan1, FDCAN_RX_FIFO0, &RxHeader, RxData) != HAL_OK) {
+      Error_Handler();
+    }
+
+    if ((RxHeader.Identifier == 0x101)) {
+//            for (int i = 0; i < 16; ++i) {
+//                printf("%x, ", RxData[i]);
+//            }
+//            printf("\n\r");
+      union {
+          uint8_t bytes[4];
+          float data;
+      }Data;
+      for (int i = 0; i < 4; ++i) {
+        Data.bytes[i] = RxData[i + 4 * PADDING];
+      }
+      printf("target velocity = %f[m/s]\r\f", Data.data);
+      target_velocity = Data.data;
+    }
+  }
+}
 /* USER CODE END 4 */
 
 /**
@@ -560,14 +600,17 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     // Get Encoder Count
     count = __HAL_TIM_GET_COUNTER(&htim1);
     __HAL_TIM_SET_COUNTER(&htim1, 0);
+//    printf("%d\r\n", count);
 
     // Calculate Velocity
     rpm = (((float)count / (float)ENCODER_PR) / 0.001f) * 60.0f;
     velocity = (FILTER_C * velocity) + (1 - FILTER_C) * __RPM_TO_VELOCITY(rpm);
 
     // PID
-    float duty_e = calc_output_PID_AW(target_velocity, velocity, 0.001f);
-    duty += duty_e;
+//    float duty_e = calc_output_PID_AW(target_velocity, velocity, 0.001f);
+//    duty += duty_e;
+
+    duty = (int)(target_velocity * 40);
 
     // Update PID Output
     if (duty > MAX_OUT) {
