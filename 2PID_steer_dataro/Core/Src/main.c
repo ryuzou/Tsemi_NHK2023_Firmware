@@ -518,8 +518,8 @@ int _write(int file, char *ptr, int len) {
 }
 
 int wheel_Feedfoward(float target) {
-//  return (int)(target / 141600.0f * 999.0f);
-  return (int)(target / 62000.0f * 990.0f);
+//  return (int)(target / 1885.0f * 999.0f);
+  return (int)(target / 1885.0f * 990.0f);
 //  return (int)target;
 }
 
