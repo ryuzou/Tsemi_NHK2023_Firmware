@@ -41,6 +41,7 @@
 #define FILTER_C 0.9f
 
 #define __abs(x) (((x) > 0) ? (x) : (-1*x))
+#define PI 3.14159f
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -590,7 +591,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     /* wheel */
     enc_buff_B = __HAL_TIM_GET_COUNTER(&htim2);
     __HAL_TIM_SET_COUNTER(&htim2, 0);
-    speed = speed * FILTER_C + (1 - FILTER_C) * ((float)enc_buff_B / ((float)ENCODER_PR_WHEEL)) / dt * 360.0f;
+    speed = speed * FILTER_C + (1 - FILTER_C) * ((float)enc_buff_B / ((float)ENCODER_PR_WHEEL)) / dt * 2 * PI;
     speed = __abs(speed);
     speed_duty = wheel_Feedfoward(speed_target) + calc_PID(&hpidWheel, speed_target, speed, dt);
 //    speed_duty = wheel_Feedfoward(speed_target);
