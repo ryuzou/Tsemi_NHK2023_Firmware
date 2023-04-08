@@ -485,9 +485,6 @@ int _write(int file, char *ptr, int len) {
   return len;
 }
 
-void HAL_ADC_LevelOutOfWindowCallback(ADC_HandleTypeDef* hadc) {
-  printf("LevelOutOfWindowCallback\r\n");
-}
 
 /* Use UART to check Emergency button */
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {

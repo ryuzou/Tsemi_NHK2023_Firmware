@@ -9,18 +9,18 @@ CDefines=USE_HAL_DRIVER;STM32G431xx;USE_HAL_DRIVER;USE_HAL_DRIVER;
 [PreviousGenFiles]
 AdvancedFolderStructure=true
 HeaderFileListSize=3
-HeaderFiles#0=C:/Users/kenke/Desktop/Univ/T-semi/NHK2023/Ryuzo_github/Tsemi_NHK2023_Firmware/RR_Omni/Core/Inc/stm32g4xx_it.h
-HeaderFiles#1=C:/Users/kenke/Desktop/Univ/T-semi/NHK2023/Ryuzo_github/Tsemi_NHK2023_Firmware/RR_Omni/Core/Inc/stm32g4xx_hal_conf.h
-HeaderFiles#2=C:/Users/kenke/Desktop/Univ/T-semi/NHK2023/Ryuzo_github/Tsemi_NHK2023_Firmware/RR_Omni/Core/Inc/main.h
+HeaderFiles#0=E:/2023NHK/Software/Firmware/RR_Omni/Core/Inc/stm32g4xx_it.h
+HeaderFiles#1=E:/2023NHK/Software/Firmware/RR_Omni/Core/Inc/stm32g4xx_hal_conf.h
+HeaderFiles#2=E:/2023NHK/Software/Firmware/RR_Omni/Core/Inc/main.h
 HeaderFolderListSize=1
-HeaderPath#0=C:/Users/kenke/Desktop/Univ/T-semi/NHK2023/Ryuzo_github/Tsemi_NHK2023_Firmware/RR_Omni/Core/Inc
+HeaderPath#0=E:/2023NHK/Software/Firmware/RR_Omni/Core/Inc
 HeaderFiles=;
 SourceFileListSize=4
-SourceFiles#0=C:/Users/kenke/Desktop/Univ/T-semi/NHK2023/Ryuzo_github/Tsemi_NHK2023_Firmware/RR_Omni/Core/Src/stm32g4xx_it.c
-SourceFiles#1=C:/Users/kenke/Desktop/Univ/T-semi/NHK2023/Ryuzo_github/Tsemi_NHK2023_Firmware/RR_Omni/Core/Src/stm32g4xx_hal_msp.c
-SourceFiles#2=C:/Users/kenke/Desktop/Univ/T-semi/NHK2023/Ryuzo_github/Tsemi_NHK2023_Firmware/RR_Omni/Core/Src/stm32g4xx_hal_timebase_tim.c
-SourceFiles#3=C:/Users/kenke/Desktop/Univ/T-semi/NHK2023/Ryuzo_github/Tsemi_NHK2023_Firmware/RR_Omni/Core/Src/main.c
+SourceFiles#0=E:/2023NHK/Software/Firmware/RR_Omni/Core/Src/stm32g4xx_it.c
+SourceFiles#1=E:/2023NHK/Software/Firmware/RR_Omni/Core/Src/stm32g4xx_hal_msp.c
+SourceFiles#2=E:/2023NHK/Software/Firmware/RR_Omni/Core/Src/stm32g4xx_hal_timebase_tim.c
+SourceFiles#3=E:/2023NHK/Software/Firmware/RR_Omni/Core/Src/main.c
 SourceFolderListSize=1
-SourcePath#0=C:/Users/kenke/Desktop/Univ/T-semi/NHK2023/Ryuzo_github/Tsemi_NHK2023_Firmware/RR_Omni/Core/Src
+SourcePath#0=E:/2023NHK/Software/Firmware/RR_Omni/Core/Src
 SourceFiles=;
 
