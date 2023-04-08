@@ -38,7 +38,7 @@
 #define ENCODER_PR_STEER 8192
 #define ENCODER_PR_WHEEL 2048
 
-#define FILTER_C 0.9f
+#define FILTER_C 0.85f
 
 #define __abs(x) (((x) > 0) ? (x) : (-1*x))
 #define PI 3.14159f
@@ -137,7 +137,7 @@ int main(void)
   HAL_TIM_Base_Start_IT(&htim4);
   HAL_UART_Receive_IT(&huart2, UART_BUFF, BUFF_LEN);
 
-  SETPIDGAIN(&hpidSteer, 78.25f, 14.25f, 7.75f);
+  SETPIDGAIN(&hpidSteer, 78.25f, 14.25f, 7.50f);
   SETPIDGAIN(&hpidWheel, 0.001f, 0.05f, 0);
   /* USER CODE END 2 */
 
@@ -569,7 +569,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     /* steering */
     enc_buff_A = __HAL_TIM_GET_COUNTER(&htim1);
     __HAL_TIM_SET_COUNTER(&htim1, 0);
-    steer_angle += (float)enc_buff_A / (float)ENCODER_PR_STEER * 360.0f;
+    steer_angle = FILTER_C * steer_angle + (1 - FILTER_C) * ((float)enc_buff_A / (float)ENCODER_PR_STEER * 360.0f);
     steer_duty = calc_PID(&hpidSteer, steer_angle_target, steer_angle, dt);
     if (steer_duty > 990) {
       SETWINDUPFLAG(&hpidSteer, 1);
