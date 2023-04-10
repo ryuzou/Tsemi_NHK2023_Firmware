@@ -3,6 +3,7 @@
 //
 
 #include "PID.h"
+#define FILTER_COEFFICIENT 0.9f
 
 int calc_PID(PIDparamshandleTypeDef *handler, float target, float curr_val, float dt) {
 
@@ -12,7 +13,8 @@ int calc_PID(PIDparamshandleTypeDef *handler, float target, float curr_val, floa
     handler->e_int += (handler->e + handler->e_pre) * dt / 2.0f;
   }
 
-  handler->e_diff = (handler->e_pre_pre - 4.0f*handler->e_pre + 3.0f*handler->e) / (2.0f * dt);
+// differential ( filter)
+  handler->e_diff = handler->e_diff * FILTER_COEFFICIENT + (1-FILTER_COEFFICIENT) * ((handler->e_pre_pre - 4.0f*handler->e_pre + 3.0f*handler->e) / (2.0f * dt));
 
   handler->e_pre_pre = handler->e_pre;
   handler->e_pre = handler->e;

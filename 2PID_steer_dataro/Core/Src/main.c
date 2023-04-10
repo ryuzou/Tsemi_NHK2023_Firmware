@@ -569,7 +569,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     /* steering */
     enc_buff_A = __HAL_TIM_GET_COUNTER(&htim1);
     __HAL_TIM_SET_COUNTER(&htim1, 0);
-    steer_angle = FILTER_C * steer_angle + (1 - FILTER_C) * ((float)enc_buff_A / (float)ENCODER_PR_STEER * 360.0f);
+    steer_angle += (float)enc_buff_A / (float)ENCODER_PR_STEER * 360.0f;
     steer_duty = calc_PID(&hpidSteer, steer_angle_target, steer_angle, dt);
     if (steer_duty > 990) {
       SETWINDUPFLAG(&hpidSteer, 1);
