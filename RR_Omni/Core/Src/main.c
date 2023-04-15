@@ -45,19 +45,19 @@
 #define M1
 
 #ifdef M1
-#define THIS_STATUS_CAN_ID 0x501
+#define THIS_STATUS_CAN_ID 0x521
 #define PADDING 0
 #endif
 #ifdef M2
-#define THIS_STATUS_CAN_ID 0x502
+#define THIS_STATUS_CAN_ID 0x522
 #define PADDING 1
 #endif
 #ifdef M3
-#define THIS_STATUS_CAN_ID 0x503
+#define THIS_STATUS_CAN_ID 0x523
 #define PADDING 2
 #endif
 #ifdef M4
-#define THIS_STATUS_CAN_ID 0x504
+#define THIS_STATUS_CAN_ID 0x524
 #define PADDING 3
 #endif
 /* USER CODE END PD */
