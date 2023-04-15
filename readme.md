@@ -10,7 +10,7 @@
 | RR_angle     | RR    | RRの角度調整    | 0x302 | 0x514          | 1      |
 | ER_load      | ER    | ERの装填      | 0x311 | 0x515          | 1      |
 | RR_load      | RR    | RRの装填      | 0x312 | 0x516          | 1      |
-| ER_collect   | ER    | ERの回収      | 0x321 | 0x517          | 1      |
+| ER_collect   | ER    | ERの回収      | 0x321, 0x323 | 0x517          | 1      |
 | RR_collect   | RR    | RRの回収      | 0x322 | 0x518          | 1      |
 
 
