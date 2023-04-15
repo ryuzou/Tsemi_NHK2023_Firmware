@@ -34,34 +34,34 @@ $(wildcard ../makefile.init) \
 $(wildcard ../makefile.targets) \
 
 
-BUILD_ARTIFACT_NAME := RingSetter
+BUILD_ARTIFACT_NAME := ER_Collect
 BUILD_ARTIFACT_EXTENSION := elf
 BUILD_ARTIFACT_PREFIX :=
 BUILD_ARTIFACT := $(BUILD_ARTIFACT_PREFIX)$(BUILD_ARTIFACT_NAME)$(if $(BUILD_ARTIFACT_EXTENSION),.$(BUILD_ARTIFACT_EXTENSION),)
 
 # Add inputs and outputs from these tool invocations to the build variables 
 EXECUTABLES += \
-RingSetter.elf \
+ER_Collect.elf \
 
 MAP_FILES += \
-RingSetter.map \
+ER_Collect.map \
 
 SIZE_OUTPUT += \
 default.size.stdout \
 
 OBJDUMP_LIST += \
-RingSetter.list \
+ER_Collect.list \
 
 
 # All Target
 all: main-build
 
 # Main-build Target
-main-build: RingSetter.elf secondary-outputs
+main-build: ER_Collect.elf secondary-outputs
 
 # Tool invocations
-RingSetter.elf RingSetter.map: $(OBJS) $(USER_OBJS) C:\data\Tsemi\NHK2023\RingSetter\STM32G431KBTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "RingSetter.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\data\Tsemi\NHK2023\RingSetter\STM32G431KBTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="RingSetter.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+ER_Collect.elf ER_Collect.map: $(OBJS) $(USER_OBJS) C:\data\Tsemi\NHK2023\ER_Collect\STM32G431KBTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "ER_Collect.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\data\Tsemi\NHK2023\ER_Collect\STM32G431KBTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="ER_Collect.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
@@ -70,14 +70,14 @@ default.size.stdout: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
 	@echo 'Finished building: $@'
 	@echo ' '
 
-RingSetter.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "RingSetter.list"
+ER_Collect.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "ER_Collect.list"
 	@echo 'Finished building: $@'
 	@echo ' '
 
 # Other Targets
 clean:
-	-$(RM) RingSetter.elf RingSetter.list RingSetter.map default.size.stdout
+	-$(RM) ER_Collect.elf ER_Collect.list ER_Collect.map default.size.stdout
 	-@echo ' '
 
 secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST)
