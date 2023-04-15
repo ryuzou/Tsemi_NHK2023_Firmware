@@ -159,10 +159,10 @@ int main(void)
     FDCAN_FilterTypeDef sFilterConfig;
     sFilterConfig.IdType = FDCAN_STANDARD_ID;
     sFilterConfig.FilterIndex = 0;
-    sFilterConfig.FilterType = FDCAN_FILTER_MASK;
+    sFilterConfig.FilterType = FDCAN_FILTER_DUAL;
     sFilterConfig.FilterConfig = FDCAN_FILTER_TO_RXFIFO0;
-    sFilterConfig.FilterID1 = 0x101;
-    sFilterConfig.FilterID2 = 0x7FF;
+    sFilterConfig.FilterID1 = 0x051;
+    sFilterConfig.FilterID2 = 0x102;
 
     if (HAL_FDCAN_ConfigFilter(&hfdcan1, &sFilterConfig) != HAL_OK) {
         Error_Handler();
@@ -558,11 +558,7 @@ void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan1, uint32_t RxFifo0ITs
             Error_Handler();
         }
 
-        if ((RxHeader.Identifier == 0x101)) {
-//            for (int i = 0; i < 16; ++i) {
-//                printf("%x, ", RxData[i]);
-//            }
-//            printf("\n\r");
+        if ((RxHeader.Identifier == 0x102)) {
             union {
                 uint8_t bytes[4];
                 float data;
@@ -570,7 +566,10 @@ void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan1, uint32_t RxFifo0ITs
             for (int i = 0; i < 4; ++i) {
                 Data.bytes[i] = RxData[i + 4 * PADDING];
             }
-            printf("target velocity = %f[m/s]\r\f", Data.data);
+            //todo, Please set target velocity[m/s] to Data.data
+        }
+        if ((RxHeader.Identifier == 0x051)) {
+            //todo, Please write reset code
         }
     }
 }
