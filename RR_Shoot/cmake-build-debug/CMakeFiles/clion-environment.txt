@@ -1,4 +1,3 @@
-ToolSet: 5.4 (local)@C:\MinGW
-Options: 
+ToolSet: Ubuntu 22.04.2 LTS (local)Options: 
 
-Options:-DCMAKE_MAKE_PROGRAM=C:/Users/ryuzo/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/223.8617.54/bin/ninja/win/x64/ninja.exe
+Options:

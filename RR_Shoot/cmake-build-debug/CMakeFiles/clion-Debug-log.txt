@@ -1,19 +1,45 @@
-C:\Users\ryuzo\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\223.8617.54\bin\cmake\win\x64\bin\cmake.exe -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=C:/Users/ryuzo/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/223.8617.54/bin/ninja/win/x64/ninja.exe -G Ninja -S E:\2023NHK\Software\Firmware\RR_Omni -B E:\2023NHK\Software\Firmware\RR_Omni\cmake-build-debug
--- The C compiler identification is GNU 10.3.1
--- The CXX compiler identification is GNU 10.3.1
--- The ASM compiler identification is GNU
--- Found assembler: C:/Program Files (x86)/GNU Arm Embedded Toolchain/10 2021.10/bin/arm-none-eabi-gcc.exe
--- Detecting C compiler ABI info
--- Detecting C compiler ABI info - done
--- Check for working C compiler: C:/Program Files (x86)/GNU Arm Embedded Toolchain/10 2021.10/bin/arm-none-eabi-gcc.exe - skipped
--- Detecting C compile features
--- Detecting C compile features - done
--- Detecting CXX compiler ABI info
--- Detecting CXX compiler ABI info - done
--- Check for working CXX compiler: C:/Program Files (x86)/GNU Arm Embedded Toolchain/10 2021.10/bin/arm-none-eabi-g++.exe - skipped
--- Detecting CXX compile features
--- Detecting CXX compile features - done
--- Minimal optimization, debug info included
--- Configuring done
--- Generating done
--- Build files have been written to: E:/2023NHK/Software/Firmware/RR_Omni/cmake-build-debug
+C:\WINDOWS\system32\wsl.exe --distribution Ubuntu-22.04 --exec /bin/bash -c "export PATH=\"$PATH:/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/lib/wsl/lib:/mnt/c/Program Files/Microsoft/jdk-11.0.16.101-hotspot/bin:/mnt/c/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.1/bin:/mnt/c/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.1/libnvvp:/mnt/c/WINDOWS/system32:/mnt/c/WINDOWS:/mnt/c/WINDOWS/System32/Wbem:/mnt/c/WINDOWS/System32/WindowsPowerShell/v1.0/:/mnt/c/WINDOWS/System32/OpenSSH/:/mnt/c/Program Files (x86)/NVIDIA Corporation/PhysX/Common:/mnt/c/Program Files/NVIDIA Corporation/NVIDIA NvDLISR:/mnt/c/Program Files/NVIDIA Corporation/Nsight Compute 2023.1.0/:/mnt/c/Program Files/dotnet/:/mnt/c/ProgramData/chocolatey/bin:/mnt/c/Program Files/Git/cmd:/mnt/c/ProgramData/chocolatey/lib/mpv.install/tools:/mnt/c/Users/ryuzo/arm-toolchain/12.2-mpacbti-rel1/bin:/mnt/c/Users/ryuzo/AppData/Local/Programs/Python/Python311/Scripts/:/mnt/c/Users/ryuzo/AppData/Local/Programs/Python/Python311/:/mnt/c/Users/ryuzo/AppData/Local/Microsoft/WindowsApps:/mnt/c/Users/ryuzo/AppData/Local/JetBrains/Toolbox/scripts:/mnt/c/Users/ryuzo/AppData/Local/Programs/Python:/snap/bin\" && export CMAKE_COLOR_DIAGNOSTICS=ON && export CLION_IDE=TRUE && export PYTHONPATH='/home/ryuzot/exp_ws/install/tcp_socket_msg/local/lib/python3.10/dist-packages:/home/ryuzot/exp_ws/install/socketcan_interface_msg/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages' && export ROS_VERSION=2 && export ROS_PYTHON_VERSION=3 && export ROS_LOCALHOST_ONLY=0 && export WSL_INTEROP=/run/WSL/8738_interop && export CMAKE_PREFIX_PATH='/home/ryuzot/exp_ws/install/tcp_interface:/home/ryuzot/exp_ws/install/stear_node:/home/ryuzot/exp_ws/install/socketcan_interface:/home/ryuzot/exp_ws/install/rr_manual_node:/home/ryuzot/exp_ws/install/mechanam_node:/home/ryuzot/exp_ws/install/utilities:/home/ryuzot/exp_ws/install/tcp_socket_msg:/home/ryuzot/exp_ws/install/socketcan_interface_msg' && export LD_LIBRARY_PATH='/home/ryuzot/exp_ws/install/tcp_interface/lib:/home/ryuzot/exp_ws/install/stear_node/lib:/home/ryuzot/exp_ws/install/socketcan_interface/lib:/home/ryuzot/exp_ws/install/rr_manual_node/lib:/home/ryuzot/exp_ws/install/mechanam_node/lib:/home/ryuzot/exp_ws/install/utilities/lib:/home/ryuzot/exp_ws/install/tcp_socket_msg/lib:/home/ryuzot/exp_ws/install/socketcan_interface_msg/lib:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib' && export AMENT_PREFIX_PATH='/home/ryuzot/exp_ws/install/tcp_interface:/home/ryuzot/exp_ws/install/stear_node:/home/ryuzot/exp_ws/install/socketcan_interface:/home/ryuzot/exp_ws/install/rr_manual_node:/home/ryuzot/exp_ws/install/mechanam_node:/home/ryuzot/exp_ws/install/utilities:/home/ryuzot/exp_ws/install/tcp_socket_msg:/home/ryuzot/exp_ws/install/socketcan_interface_msg:/opt/ros/humble' && export COLCON_PREFIX_PATH=/home/ryuzot/exp_ws/install && export ROS_DISTRO=humble && export JETBRAINS_IDE=TRUE && cd /mnt/e/2023NHK/Software/Firmware/RR_Shoot/cmake-build-debug && /usr/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G 'CodeBlocks - Unix Makefiles' -S /mnt/e/2023NHK/Software/Firmware/RR_Shoot -B /mnt/e/2023NHK/Software/Firmware/RR_Shoot/cmake-build-debug"
+-- The C compiler identification is unknown
+-- The CXX compiler identification is unknown
+-- The ASM compiler identification is unknown
+-- Found assembler: arm-none-eabi-gcc
+CMake Error at CMakeLists.txt:17 (project):
+  The CMAKE_C_COMPILER:
+
+    arm-none-eabi-gcc
+
+  is not a full path and was not found in the PATH.
+
+  Tell CMake where to find the compiler by setting either the environment
+  variable "CC" or the CMake cache entry CMAKE_C_COMPILER to the full path to
+  the compiler, or to the compiler name if it is in the PATH.
+
+
+CMake Error at CMakeLists.txt:17 (project):
+  The CMAKE_CXX_COMPILER:
+
+    arm-none-eabi-g++
+
+  is not a full path and was not found in the PATH.
+
+  Tell CMake where to find the compiler by setting either the environment
+  variable "CXX" or the CMake cache entry CMAKE_CXX_COMPILER to the full path
+  to the compiler, or to the compiler name if it is in the PATH.
+
+
+CMake Error at CMakeLists.txt:17 (project):
+  The CMAKE_ASM_COMPILER:
+
+    arm-none-eabi-gcc
+
+  is not a full path and was not found in the PATH.
+
+  Tell CMake where to find the compiler by setting either the environment
+  variable "ASM" or the CMake cache entry CMAKE_ASM_COMPILER to the full path
+  to the compiler, or to the compiler name if it is in the PATH.
+
+
+-- Warning: Did not find file Compiler/-ASM
+-- Configuring incomplete, errors occurred!
+See also "/mnt/e/2023NHK/Software/Firmware/RR_Shoot/cmake-build-debug/CMakeFiles/CMakeOutput.log".
+See also "/mnt/e/2023NHK/Software/Firmware/RR_Shoot/cmake-build-debug/CMakeFiles/CMakeError.log".
