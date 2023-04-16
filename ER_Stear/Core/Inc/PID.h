@@ -12,6 +12,12 @@
 
 #define SETWINDUPFLAG(handler, value) ((handler)->is_windup = value)
 
+#define RESETPID(handler) do{ \
+(handler)->e = 0;     \
+(handler)->e_pre = 0;         \
+(handler)->e_pre_pre = 0;     \
+(handler)->e_int = 0;} while(0)
+
 typedef struct {
     float Kp;
     float Ki;
