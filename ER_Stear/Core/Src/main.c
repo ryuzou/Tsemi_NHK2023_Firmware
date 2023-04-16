@@ -662,7 +662,7 @@ void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan1, uint32_t RxFifo0ITs
             for (int i = 0; i < 4; ++i) {
                 Velocity_Data.bytes[i] = RxData[i + 4 * PADDING];
             }
-            //todo, Please insert Velocity_Data[m/s] to velocity data of stear
+            //insert Velocity_Data[m/s] to velocity data of stear
             steer_duty = Velocity_Data.data * 50;
 
             union {
@@ -673,13 +673,12 @@ void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan1, uint32_t RxFifo0ITs
                 Radian_Data.bytes[i] = RxData[i + 16 + 4 * PADDING];
             }
             steer_angle_target = Radian_Data.data;
-            //todo, Please insert Radiant_Data[rad/s] to radiant data of stear
+            //insert Radiant_Data[rad/s] to radiant data of stear
         }
         if ((RxHeader.Identifier == 0x051)) {
             //todo, Please write reset code
             steer_duty = 0;
             steer_angle = 0;
-
         }
     }
 }
