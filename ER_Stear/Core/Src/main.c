@@ -167,7 +167,7 @@ int main(void)
   HAL_UART_Receive_IT(&huart2, UART_BUFF, BUFF_LEN);
 
   SETPIDGAIN(&hpidSteer, 78.25f, 14.25f, 7.75f);
-  SETPIDGAIN(&hpidWheel, 0.001f, 0.05f, 0);
+  SETPIDGAIN(&hpidWheel, 1.0f, 0.00f, 0);
 
     TxHeader.Identifier = THIS_STATUS_CAN_ID;
     TxHeader.IdType = FDCAN_STANDARD_ID;
@@ -663,7 +663,9 @@ void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan1, uint32_t RxFifo0ITs
                 Velocity_Data.bytes[i] = RxData[i + 4 * PADDING];
             }
             //insert Velocity_Data[m/s] to velocity data of stear
-            steer_duty = Velocity_Data.data * 50;
+            float velocity_rad = 0;
+            velocity_rad = Velocity_Data.data / 0.05 * 17.8;    // adjust to rad/s
+            speed_target = velocity_rad;
 
             union {
                 uint8_t bytes[4];
