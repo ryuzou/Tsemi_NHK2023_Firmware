@@ -3048,7 +3048,7 @@ __STATIC_INLINE uint32_t LL_ADC_GetDataAlignment(ADC_TypeDef *ADCx)
   *             since these modes have to clear immediately the EOC flag
   *             (by CPU to free the IRQ pending event or by DMA).
   *             Auto wait will work but fort a very short time, discarding
-  *             its intended benefit (except specific case of high load of CPU
+  *             its intended benefit (except specific case of high RR_Load of CPU
   *             or DMA transfers which can justify usage of auto wait).
   *           - Do use with polling: 1. Start conversion,
   *             2. Later on, when conversion data is needed: poll for end of
@@ -3104,7 +3104,7 @@ __STATIC_INLINE void LL_ADC_SetLowPowerMode(ADC_TypeDef *ADCx, uint32_t LowPower
   *             since these modes have to clear immediately the EOC flag
   *             (by CPU to free the IRQ pending event or by DMA).
   *             Auto wait will work but fort a very short time, discarding
-  *             its intended benefit (except specific case of high load of CPU
+  *             its intended benefit (except specific case of high RR_Load of CPU
   *             or DMA transfers which can justify usage of auto wait).
   *           - Do use with polling: 1. Start conversion,
   *             2. Later on, when conversion data is needed: poll for end of
