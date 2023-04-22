@@ -74,6 +74,16 @@ BarState state = OPEN;
 
 #define UART_LEN 1
 uint8_t UART_BUFF[UART_LEN];
+
+int flag = 0;
+
+FDCAN_TxHeaderTypeDef TxHeader;
+FDCAN_RxHeaderTypeDef RxHeader;
+FDCAN_FilterTypeDef sFilterConfig;
+
+uint8_t TxData[1];
+uint8_t RxData[1];
+uint32_t TxMailbox;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -129,7 +139,39 @@ int main(void)
   MX_ADC1_Init();
   MX_FDCAN1_Init();
   /* USER CODE BEGIN 2 */
+    TxHeader.Identifier = 0x517;
+    TxHeader.IdType = FDCAN_STANDARD_ID;
+    TxHeader.TxFrameType = FDCAN_DATA_FRAME;
+    TxHeader.DataLength = FDCAN_DLC_BYTES_1;
+    TxHeader.ErrorStateIndicator = FDCAN_ESI_ACTIVE;
+    TxHeader.BitRateSwitch = FDCAN_BRS_ON;
+    TxHeader.FDFormat = FDCAN_FD_CAN;
+    TxHeader.TxEventFifoControl = FDCAN_NO_TX_EVENTS;
+    TxHeader.MessageMarker = 0;
 
+    FDCAN_FilterTypeDef sFilterConfig;
+    sFilterConfig.IdType = FDCAN_STANDARD_ID;
+    sFilterConfig.FilterIndex = 0;
+    sFilterConfig.FilterType = FDCAN_FILTER_DUAL;
+    sFilterConfig.FilterConfig = FDCAN_FILTER_TO_RXFIFO0;
+    sFilterConfig.FilterID1 = 0x051;
+    sFilterConfig.FilterID2 = 0x321;
+
+    if (HAL_FDCAN_ConfigFilter(&hfdcan1, &sFilterConfig) != HAL_OK) {
+        Error_Handler();
+    }
+    if (HAL_FDCAN_ConfigGlobalFilter(&hfdcan1, FDCAN_REJECT, FDCAN_REJECT, FDCAN_FILTER_REMOTE, FDCAN_FILTER_REMOTE) !=
+        HAL_OK) {
+        Error_Handler();
+    }
+
+    /* Start the FDCAN module */
+    if (HAL_FDCAN_Start(&hfdcan1) != HAL_OK) {
+        Error_Handler();
+    }
+    if (HAL_FDCAN_ActivateNotification(&hfdcan1, FDCAN_IT_RX_FIFO0_NEW_MESSAGE, 0) != HAL_OK){
+        Error_Handler();
+    }
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -143,9 +185,11 @@ int main(void)
   HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_SET);
   while (1) {
     /* USER CODE END WHILE */
-
+    if(flag){
+        HAL_Delay(100);
+        state = CLOSE;
+    }
     /* USER CODE BEGIN 3 */
-    HAL_Delay(1);
   }
   /* USER CODE END 3 */
 }
@@ -535,6 +579,23 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
       printf("open\r\n");
     }
   }
+}
+
+void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan1, uint32_t RxFifo0ITs) {
+    if ((RxFifo0ITs & FDCAN_IT_RX_FIFO0_NEW_MESSAGE) != RESET) {
+        /* Retrieve Rx messages from RX FIFO0 */
+        if (HAL_FDCAN_GetRxMessage(hfdcan1, FDCAN_RX_FIFO0, &RxHeader, RxData) != HAL_OK) {
+            Error_Handler();
+        }
+
+        if ((RxHeader.Identifier == 0x311)) {
+            flag = 1;
+        }
+        if ((RxHeader.Identifier == 0x051)) {
+            // 初期化処理
+            flag = 0;
+        }
+    }
 }
 /* USER CODE END 4 */
 
