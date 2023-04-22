@@ -267,7 +267,10 @@ int main(void)
 	  __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, pwm);
 
 	  //HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_1);
-
+      if (reset_flag == 0){
+          HAL_Delay(300);
+          reset_flag == 1;
+      }
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -647,11 +650,11 @@ void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan1, uint32_t RxFifo0ITs
                 Velocity_Data.data[i] = RxData[i]
             }
             v_ref = Velocity_Data.data;
-            reset_flag = 1;
+            reset_flag = 0;
         }
         if ((RxHeader.Identifier == 0x051)) {
             v_ref = 0;
-            reset_flag = 0;
+            reset_flag = 1;
         }
     }
 }
