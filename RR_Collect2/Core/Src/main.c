@@ -15,6 +15,13 @@
   *
   ******************************************************************************
   */
+
+
+/**
+ *****************************
+ *  回収機構の直動機構のプログラム　*
+ *****************************
+**/
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
@@ -47,21 +54,19 @@ TIM_HandleTypeDef htim3;
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
-FDCAN_TxHeaderTypeDef TxHeader;
-FDCAN_RxHeaderTypeDef RxHeader;
-FDCAN_FilterTypeDef sFilterConfig;
 
-uint8_t TxData[1];
-uint8_t RxData[4];
-uint32_t TxMailbox;
+int origin = 0; //原点を取ったかのフラグ
+int cnt = 0; //エンコーダーの値をカウントするプログラム
+int flag = 0; //どの操作を実行するかのフラグ
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
-static void MX_TIM2_Init(void);
 static void MX_TIM3_Init(void);
+static void MX_TIM2_Init(void);
 static void MX_FDCAN1_Init(void);
 /* USER CODE BEGIN PFP */
 
@@ -70,19 +75,16 @@ static void MX_FDCAN1_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
-int origin = 0; //原点を取ったかを記録する変数
-int cnt = 0; //エンコーダーの値を記録する変数
-int flag = 0; //どの操作を行うか判断するフラグ
-
-void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){ //リミットスイッチを押したとき
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){//リミットスイッチを押したとき
 
 	if (GPIO_Pin == GPIO_PIN_1 && origin == 0){
 		__HAL_GPIO_EXTI_CLEAR_FLAG(GPIO_PIN_1);
-		//__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, 0);
-		//HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_SET);
+		__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, 0);
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_RESET);
 		origin = 1;
-		flag = 2;
+		flag = 5;
 		HAL_TIM_Encoder_Start(&htim2, TIM_CHANNEL_ALL);
+
 	}
 }
 
@@ -117,10 +119,15 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_USART2_UART_Init();
-  MX_TIM2_Init();
   MX_TIM3_Init();
+  MX_TIM2_Init();
   MX_FDCAN1_Init();
   /* USER CODE BEGIN 2 */
+
+  __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, 0);
+  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_SET);
+  HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
+
     TxHeader.Identifier = 0x513;
     TxHeader.IdType = FDCAN_STANDARD_ID;
     TxHeader.TxFrameType = FDCAN_DATA_FRAME;
@@ -139,69 +146,70 @@ int main(void)
     sFilterConfig.FilterID1 = 0x051;
     sFilterConfig.FilterID2 = 0x302;
 
-  __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, 0);
-  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_RESET);
-  HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
-  __HAL_GPIO_EXTI_CLEAR_FLAG(GPIO_PIN_1);
-
+    __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, 0);
+    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_RESET);
+    HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
+    __HAL_GPIO_EXTI_CLEAR_FLAG(GPIO_PIN_1);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+
   while (1)
   {
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-        if(flag == 5){
-            HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_RESET);
-            __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, 60);
-            HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_SET);
-            __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, 60);
-            cnt = abs(__HAL_TIM_GET_COUNTER(&htim2));
-            if(cnt == 140){
-                __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, 0);
-                flag = 0;
-            }
-        }
+	if(flag == 1){//原点出し
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_SET);
+		__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, 60);
+		flag = 0;
+	}
 
-	  if(flag == 1){//原点を取る
-		  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_RESET);
-		  __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, 60);
-	  }
+	if(flag == 5){
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_RESET);
+		__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, 60);
+		cnt = abs(__HAL_TIM_GET_COUNTER(&htim2));
+		if(cnt == 215){
+			__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, 0);
+			flag = 0;
+		}
+	}
 
-	  if(flag == 2){//原点を取ったあとに初期位置に
-		  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_SET);
-		  __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, 60);
-		  cnt = abs(__HAL_TIM_GET_COUNTER(&htim2));
-		  if(cnt == 140){
-			  __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, 0);
-			  flag = 0;
-		  }
-	  }
+	if(flag == 2){ //回収機構をリングにの上に移動
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_RESET);
+		__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, 60);
+		cnt = abs(__HAL_TIM_GET_COUNTER(&htim2));
 
-	  if(flag == 3){ //発射台を45度傾ける
-		  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_SET);
-		  __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, 60);
-		  cnt = abs(__HAL_TIM_GET_COUNTER(&htim2));
+		if(cnt == 600){
+			__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, 0);
+			flag = 0;
+		}
+	}
 
-		  if(cnt == 1900){
-			  __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, 0);
-			  flag = 0;
-		  }
-	  }
+	if(flag == 3){ //回収機構をリングを置く台に移動
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_SET);
+		__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, 60);
+		cnt = abs(__HAL_TIM_GET_COUNTER(&htim2));
 
-	  if(flag == 4){ //発射台を装填位置に移動
-		  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_RESET);
-		  __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, 60);
-		  cnt = abs(__HAL_TIM_GET_COUNTER(&htim2));
+		if(cnt == 5){
+			__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, 0);
+			flag = 0;
+		}
+	}
 
-		  if(cnt == 140){
-			  __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, 0);
-			  flag = 0;
-		  }
-	  }
+	if(flag == 4){ //回収機構をリングを置く台から機構の外に移動
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_RESET);
+		__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, 60);
+		cnt = abs(__HAL_TIM_GET_COUNTER(&htim2));
+
+		if(cnt == 600){
+			__HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, 0);
+			flag = 0;
+		}
+	}
   }
+
   /* USER CODE END 3 */
 }
 
@@ -313,12 +321,12 @@ static void MX_TIM2_Init(void)
 
   /* USER CODE END TIM2_Init 1 */
   htim2.Instance = TIM2;
-  htim2.Init.Prescaler = 2048;
+  htim2.Init.Prescaler = 4096;
   htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
   htim2.Init.Period = 4.294967295E9;
   htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
-  sConfig.EncoderMode = TIM_ENCODERMODE_TI1;
+  sConfig.EncoderMode = TIM_ENCODERMODE_TI12;
   sConfig.IC1Polarity = TIM_ICPOLARITY_RISING;
   sConfig.IC1Selection = TIM_ICSELECTION_DIRECTTI;
   sConfig.IC1Prescaler = TIM_ICPSC_DIV1;
@@ -363,7 +371,7 @@ static void MX_TIM3_Init(void)
 
   /* USER CODE END TIM3_Init 1 */
   htim3.Instance = TIM3;
-  htim3.Init.Prescaler = 169;
+  htim3.Init.Prescaler = 79;
   htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
   htim3.Init.Period = 99;
   htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
@@ -492,7 +500,7 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_Init(LD2_GPIO_Port, &GPIO_InitStruct);
 
   /* EXTI interrupt init*/
-  HAL_NVIC_SetPriority(EXTI1_IRQn, 0, 0);
+  HAL_NVIC_SetPriority(EXTI1_IRQn, 1, 0);
   HAL_NVIC_EnableIRQ(EXTI1_IRQn);
 
 /* USER CODE BEGIN MX_GPIO_Init_2 */
@@ -500,31 +508,7 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan1, uint32_t RxFifo0ITs) {
-    if ((RxFifo0ITs & FDCAN_IT_RX_FIFO0_NEW_MESSAGE) != RESET) {
-        /* Retrieve Rx messages from RX FIFO0 */
-        if (HAL_FDCAN_GetRxMessage(hfdcan1, FDCAN_RX_FIFO0, &RxHeader, RxData) != HAL_OK) {
-            Error_Handler();
-        }
 
-        if ((RxHeader.Identifier == 0x302)) {
-            if (RxData[0] == 0x005){
-                flag = 5;
-            } else if (RxData[0] == 0x001){
-                flag = 1;
-            } else if (RxData[0] == 0x002){
-                flag = 2;
-            } else if (RxData[0] == 0x003){
-                flag = 3;
-            } else if (RxData[0] == 0x004){
-                flag = 4;
-            }
-        }
-        if ((RxHeader.Identifier == 0x051)) {
-            flag = 0x005;
-        }
-    }
-}
 /* USER CODE END 4 */
 
 /**
