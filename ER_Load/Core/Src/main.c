@@ -52,7 +52,7 @@ FDCAN_RxHeaderTypeDef RxHeader;
 FDCAN_FilterTypeDef sFilterConfig;
 
 uint8_t TxData[1];
-uint8_t RxData[4];
+uint8_t RxData[1];
 uint32_t TxMailbox;
 /* USER CODE END PV */
 
@@ -105,8 +105,7 @@ void ServoDrive(int degree) {
     __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_2, PWidth);
 }
 
-int arrange_flag = 0;
-int push_flag = 0;
+int flag = 0;
 /* USER CODE END 0 */
 
 /**
@@ -155,27 +154,40 @@ int main(void) {
     sFilterConfig.FilterIndex = 0;
     sFilterConfig.FilterType = FDCAN_FILTER_DUAL;
     sFilterConfig.FilterConfig = FDCAN_FILTER_TO_RXFIFO0;
-    sFilterConfig.FilterID1 = 0x323;
-    sFilterConfig.FilterID2 = 0x321;
+    sFilterConfig.FilterID1 = 0x051;
+    sFilterConfig.FilterID2 = 0x311;
+
+    if (HAL_FDCAN_ConfigFilter(&hfdcan1, &sFilterConfig) != HAL_OK) {
+        Error_Handler();
+    }
+    if (HAL_FDCAN_ConfigGlobalFilter(&hfdcan1, FDCAN_REJECT, FDCAN_REJECT, FDCAN_FILTER_REMOTE, FDCAN_FILTER_REMOTE) !=
+        HAL_OK) {
+        Error_Handler();
+    }
+
+    /* Start the FDCAN module */
+    if (HAL_FDCAN_Start(&hfdcan1) != HAL_OK) {
+        Error_Handler();
+    }
+    if (HAL_FDCAN_ActivateNotification(&hfdcan1, FDCAN_IT_RX_FIFO0_NEW_MESSAGE, 0) != HAL_OK){
+        Error_Handler();
+    }
 
     /* USER CODE END 2 */
 
     /* Infinite loop */
     /* USER CODE BEGIN WHILE */
     while (1) {
-        if (arrange_flag == 1) {
+        if (flag == 1) {
             //todo collecting ring
             ServoDrive(200);  // 仮置き
             HAL_Delay(100);
             ServoDrive(100);  //仮置き
-            arrange_flag = 0;
-        }
-        if (push_flag == 1) {
-            //todo pushing ring
+            HAL_Delay(100);
             CylPull();
             HAL_Delay(100);
             CylPush();
-            push_flag = 0;
+            flag = 0;
         }
         /* USER CODE END WHILE */
 
@@ -410,11 +422,11 @@ void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan1, uint32_t RxFifo0ITs
             Error_Handler();
         }
 
-        if ((RxHeader.Identifier == 0x321)) {
-            arrange_flag = 1;
+        if ((RxHeader.Identifier == 0x311)) {
+            flag = 1;
         }
-        if ((RxHeader.Identifier == 0x323)) {
-            push_flag = 1;
+        if ((RxHeader.Identifier == 0x051)) {
+            // 初期化処理
         }
     }
 }
