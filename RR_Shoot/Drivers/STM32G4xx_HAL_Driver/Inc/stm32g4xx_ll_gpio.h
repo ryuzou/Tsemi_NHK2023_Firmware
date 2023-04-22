@@ -395,7 +395,7 @@ __STATIC_INLINE uint32_t LL_GPIO_GetPinOutputType(GPIO_TypeDef *GPIOx, uint32_t 
   * @note   I/O speed can be Low, Medium, Fast or High speed.
   * @note   Warning: only one pin can be passed as parameter.
   * @note   Refer to datasheet for frequency specifications and the power
-  *         supply and RR_Load conditions for each speed.
+  *         supply and load conditions for each speed.
   * @rmtoll OSPEEDR      OSPEEDy       LL_GPIO_SetPinSpeed
   * @param  GPIOx GPIO Port
   * @param  Pin This parameter can be one of the following values:
@@ -433,7 +433,7 @@ __STATIC_INLINE void LL_GPIO_SetPinSpeed(GPIO_TypeDef *GPIOx, uint32_t Pin, uint
   * @note   I/O speed can be Low, Medium, Fast or High speed.
   * @note   Warning: only one pin can be passed as parameter.
   * @note   Refer to datasheet for frequency specifications and the power
-  *         supply and RR_Load conditions for each speed.
+  *         supply and load conditions for each speed.
   * @rmtoll OSPEEDR      OSPEEDy       LL_GPIO_GetPinSpeed
   * @param  GPIOx GPIO Port
   * @param  Pin This parameter can be one of the following values:
