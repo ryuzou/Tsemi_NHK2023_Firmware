@@ -566,10 +566,12 @@ void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan1, uint32_t RxFifo0ITs
             for (int i = 0; i < 4; ++i) {
                 Data.bytes[i] = RxData[i + 4 * PADDING];
             }
+            target_velocity = Data.data;
             //todo, Please set target velocity[m/s] to Data.data
         }
         if ((RxHeader.Identifier == 0x051)) {
             //todo, Please write reset code
+            target_velocity = 0;
         }
     }
 }

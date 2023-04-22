@@ -56,7 +56,7 @@ FDCAN_RxHeaderTypeDef RxHeader;
 FDCAN_FilterTypeDef sFilterConfig;
 
 uint8_t TxData[1];
-uint8_t RxData[32];
+uint8_t RxData[4];
 uint32_t TxMailbox;
 /* USER CODE END PV */
 
@@ -173,7 +173,7 @@ int main(void)
   HAL_TIM_Base_Start_IT(&htim6);
   HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_1);
 
-    TxHeader.Identifier = 0x511;
+    TxHeader.Identifier = 0x512;
     TxHeader.IdType = FDCAN_STANDARD_ID;
     TxHeader.TxFrameType = FDCAN_DATA_FRAME;
     TxHeader.DataLength = FDCAN_DLC_BYTES_1;
@@ -617,6 +617,9 @@ void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan1, uint32_t RxFifo0ITs
                 uint8_t bytes[4];
                 float data;
             }Velocity_Data;
+            for (int i = 0; i < 4; ++i) {
+                Velocity_Data.data[i] = RxData[i]
+            }
             v_ref = Velocity_Data.data;
         }
         if ((RxHeader.Identifier == 0x051)) {
