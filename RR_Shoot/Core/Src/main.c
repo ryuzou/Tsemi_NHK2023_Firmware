@@ -269,7 +269,15 @@ int main(void)
 	  //HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_1);
       if (reset_flag == 0){
           HAL_Delay(300);
-          reset_flag == 1;
+          reset_flag = 1;
+
+          // 次の行程へCAN通信
+          TxHeader.Identifier = 0x302;
+          TxData[0] = 0x04;
+          if (HAL_FDCAN_AddMessageToTxFifoQ(&hfdcan1, &TxHeader, TxData) != HAL_OK)
+          {
+              Error_Handler();
+          }
       }
     /* USER CODE END WHILE */
 
