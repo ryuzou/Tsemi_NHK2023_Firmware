@@ -178,6 +178,14 @@ int main(void)
 	  if(flag == 1){ //装填動作
 		  __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_2, 20);
 		  flag = 0;
+
+          // 次の行程へCAN通信
+          TxHeader.Identifier = 0x302;
+          TxData[0] = 0x03;
+          if (HAL_FDCAN_AddMessageToTxFifoQ(&hfdcan1, &TxHeader, TxData) != HAL_OK)
+          {
+              Error_Handler();
+          }
 	  }
   }
   /* USER CODE END 3 */

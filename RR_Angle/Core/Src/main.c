@@ -52,7 +52,7 @@ FDCAN_RxHeaderTypeDef RxHeader;
 FDCAN_FilterTypeDef sFilterConfig;
 
 uint8_t TxData[1];
-uint8_t RxData[4];
+uint8_t RxData[1];
 uint32_t TxMailbox;
 /* USER CODE END PV */
 
@@ -200,6 +200,14 @@ int main(void)
 			  __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, 0);
 			  flag = 0;
 		  }
+
+          // 次の行程へCAN通信
+          TxHeader.Identifier = 0x324;
+          TxData[0] = 0x03;
+          if (HAL_FDCAN_AddMessageToTxFifoQ(&hfdcan1, &TxHeader, TxData) != HAL_OK)
+          {
+              Error_Handler();
+          }
 	  }
   }
   /* USER CODE END 3 */
@@ -521,7 +529,7 @@ void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan1, uint32_t RxFifo0ITs
             }
         }
         if ((RxHeader.Identifier == 0x051)) {
-            flag = 0x005;
+            flag = 5;
         }
     }
 }
